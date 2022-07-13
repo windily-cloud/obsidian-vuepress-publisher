@@ -19,6 +19,7 @@
     "@rollup/plugin-node-resolve": "^13.3.0",
     "@rollup/plugin-typescript": "^8.3.3",
     "obsidian": "^0.15.4",
+    "octokit": "^2.0.3",
     "prettier": "^2.7.1",
     "rollup": "^2.76.0",
     "rollup-plugin-postcss": "^4.0.2",

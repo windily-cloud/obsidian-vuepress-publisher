@@ -13,14 +13,24 @@ export class VuepressPublisherSettingTab extends PluginSettingTab {
     containerEl.empty();
 
     new Setting(containerEl)
-      .setName("Date format")
-      .setDesc("Default date format")
+      .setName("GitHub Token")
+      .setDesc("Your personal GitHub Token.")
       .addText((text) =>
         text
-          .setPlaceholder("MMMM dd, yyyy")
-          .setValue(this.plugin.settings && this.plugin.settings.dateFormat ? this.plugin.settings.dateFormat : '')
           .onChange(async (value) => {
-            this.plugin.settings.dateFormat = value;
+            this.plugin.settings.token = value;
+            await this.plugin.saveSettings();
+          })
+      );
+
+    new Setting(containerEl)
+      .setName("Assets Folder")
+      .setDesc("The folder to place all assets in your github repository.")
+      .addText((text) =>
+        text
+          .setPlaceholder("docs/images")
+          .onChange(async (value) => {
+            this.plugin.settings.assetsFolder = value;
             await this.plugin.saveSettings();
           })
       );
