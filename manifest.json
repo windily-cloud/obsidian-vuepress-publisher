@@ -1,0 +1,10 @@
+{
+  "id": "obsidian-vuepress-publisher",
+  "name": "Obsidian Vuepress Publisher",
+  "version": "0.0.1",
+  "minAppVersion": "0.9.12",
+  "description": "A publisher for vuepress blog.",
+  "author": "windily-cloud && jerrywcy",
+  "authorUrl": "",
+  "isDesktopOnly": true
+}

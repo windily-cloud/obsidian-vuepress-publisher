@@ -1,0 +1,28 @@
+{
+  "name": "obsdiain-vuepress-publisher",
+  "version": "0.0.1",
+  "description": "A obsdiain plugin for publishing vuepress blog.",
+  "main": "src/main.ts",
+  "scripts": {
+    "build": "rollup -c rollup.config.js",
+    "dev": "rollup -c rollup.config.js -w",
+    "lint": "eslint --ext .ts src/",
+    "lint:fix": "eslint --fix --ext .ts  src/"
+  },
+  "keywords": [
+    "obsidian"
+  ],
+  "author": "windily-cloud && jerrywcy",
+  "license": "MIT",
+  "devDependencies": {
+    "@rollup/plugin-commonjs": "^22.0.1",
+    "@rollup/plugin-node-resolve": "^13.3.0",
+    "@rollup/plugin-typescript": "^8.3.3",
+    "obsidian": "^0.15.4",
+    "prettier": "^2.7.1",
+    "rollup": "^2.76.0",
+    "rollup-plugin-postcss": "^4.0.2",
+    "tslib": "^2.4.0",
+    "typescript": "^4.7.4"
+  }
+}
