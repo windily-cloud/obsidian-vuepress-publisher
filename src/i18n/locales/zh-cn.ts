@@ -69,6 +69,6 @@ export default {
 	unablePublishMultiNotes: "不能上传多个文件，出了点问题",
 	startingClean: (repoInfo: string): string => `开始清理 ${repoInfo}`,
 	scanningRepo: "扫描仓库中，稍等...",
-	foundNoteToSend: (noteLength: string)=> `发现 ${noteLength} 篇笔记需要上传`,
+	foundNoteToSend: (noteLength: string) => `发现 ${noteLength} 篇笔记需要上传`,
 	noNewNote: "没有新笔记需要上传."
 }

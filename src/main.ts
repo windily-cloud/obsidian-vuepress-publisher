@@ -1,8 +1,9 @@
 import { Plugin } from 'obsidian'
 import { VuepressPublisherSettingTab } from "./settings";
 
+const a = 4
 interface VuepressPublisherSettings {
-  dateFormat: string;
+  dateFormat: string
 }
 
 const DEFAULT_SETTINGS: Partial<VuepressPublisherSettings> = {
