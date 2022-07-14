@@ -4,7 +4,9 @@ import { Octokit } from 'octokit';
 
 interface VuepressPublisherSettings {
   token: string;
+  username: string;
   assetsFolder: string;
+  repo: string;
 }
 
 const DEFAULT_SETTINGS: Partial<VuepressPublisherSettings> = {
