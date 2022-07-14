@@ -1,8 +1,16 @@
-import { VuepressPublisherSettingTab } from "./settings";
-import { App, Plugin } from 'obsidian';
-import { Octokit } from 'octokit';
-
+import { Plugin } from 'obsidian'
+import { VuepressPublisherSettingTab } from './settings';
+import { getGithubRepoInfo } from 'service/api';
+import t from './i18n'
 interface VuepressPublisherSettings {
+  github?: {
+    repoName: string,
+    token: string
+  },
+  gitee?: {
+    repoName: string,
+    token: string
+  }
   token: string;
   username: string;
   assetsFolder: string;
@@ -10,26 +18,33 @@ interface VuepressPublisherSettings {
 }
 
 const DEFAULT_SETTINGS: Partial<VuepressPublisherSettings> = {
+  github: {
+    repoName: "",
+    token: ""
+  }
   assetsFolder: "docs/assets",
 };
 
 export default class VuepressPublisher extends Plugin {
-  app: App
   settings: VuepressPublisherSettings;
-  octokit: Octokit;
 
   async onload(): Promise<void> {
     console.log('loading Vuepress Publisher...')
-
+    await this.loadSettings()
     //Setting
     this.addSettingTab(new VuepressPublisherSettingTab(this.app, this));
 
-    this.octokit = new Octokit({ auth: this.settings.token });
-
-    const {
-      data: { login }
-    } = await this.octokit.rest.users.getAuthenticated();
-    console.log(login);
+    this.addCommand({
+      id: "vuepress-publisher-publish",
+      name: t("githubPublish") as string,
+      callback: () => {
+        getGithubRepoInfo(this).then(
+          (res)=>{
+            console.log(res)
+          }
+        )
+      }
+    })
   }
 
   async loadSettings() {
