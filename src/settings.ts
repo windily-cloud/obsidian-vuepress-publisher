@@ -1,6 +1,6 @@
 import VuepressPublisher from "./main";
 import { App, PluginSettingTab, Setting } from "obsidian";
-
+import t from './i18n'
 export class VuepressPublisherSettingTab extends PluginSettingTab {
   constructor(app: App, public plugin: VuepressPublisher) {
     super(app, plugin);
@@ -13,16 +13,27 @@ export class VuepressPublisherSettingTab extends PluginSettingTab {
     containerEl.empty();
 
     new Setting(containerEl)
-      .setName("Date format")
-      .setDesc("Default date format")
+      .setName(t("githubRepo") as string)
+      .setDesc(t("githubRepoDesc") as string)
       .addText((text) =>
         text
-          .setPlaceholder("MMMM dd, yyyy")
-          .setValue(this.plugin.settings && this.plugin.settings.dateFormat ? this.plugin.settings.dateFormat : '')
+          .setPlaceholder(t("githubRepoPlaceholder") as string)
+          .setValue(this.plugin.settings && this.plugin.settings.github.repoName ? this.plugin.settings.github.repoName : '')
           .onChange(async (value) => {
-            this.plugin.settings.dateFormat = value;
+            this.plugin.settings.github.repoName = value;
             await this.plugin.saveSettings();
           })
       );
+
+    new Setting(containerEl)
+      .setName(t("githubToken") as string)
+      .setDesc(t("githubTokenDesc") as string)
+      .addText((text)=>{
+        text.setValue(this.plugin.settings && this.plugin.settings.github.token? this.plugin.settings.github.token : '')
+        .onChange(async (value)=>{
+          this.plugin.settings.github.token = value;
+          await this.plugin.saveSettings()
+        })
+      })
   }
 }
