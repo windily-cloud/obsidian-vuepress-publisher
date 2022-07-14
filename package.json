@@ -5,9 +5,7 @@
   "main": "src/main.ts",
   "scripts": {
     "build": "rollup -c rollup.config.js",
-    "dev": "rollup -c rollup.config.js -w",
-    "lint": "eslint --ext .ts src/",
-    "lint:fix": "eslint --fix --ext .ts  src/"
+    "dev": "rollup -c rollup.config.js -w"
   },
   "keywords": [
     "obsidian"
