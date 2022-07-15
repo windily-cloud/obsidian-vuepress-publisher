@@ -1,7 +1,8 @@
 import { Plugin } from 'obsidian'
 import { VuepressPublisherSettingTab } from './settings';
-import { getGithubRepoInfo } from 'service/api';
+import { CloudHandler, getGithubRepoInfo } from 'service/api';
 import t from './i18n'
+import { Formatter } from './formatFile';
 interface VuepressPublisherSettings {
   github?: {
     repoName: string,
@@ -11,8 +12,6 @@ interface VuepressPublisherSettings {
     repoName: string,
     token: string
   }
-  token: string;
-  username: string;
   assetsFolder: string;
   repo: string;
 }
@@ -21,28 +20,48 @@ const DEFAULT_SETTINGS: Partial<VuepressPublisherSettings> = {
   github: {
     repoName: "",
     token: ""
-  }
+  },
   assetsFolder: "docs/assets",
 };
 
 export default class VuepressPublisher extends Plugin {
   settings: VuepressPublisherSettings;
+  cloudHandler: CloudHandler;
+  formatter: Formatter;
 
   async onload(): Promise<void> {
     console.log('loading Vuepress Publisher...')
     await this.loadSettings()
-    //Setting
     this.addSettingTab(new VuepressPublisherSettingTab(this.app, this));
+
+    this.cloudHandler = new CloudHandler(this);
+    this.formatter = new Formatter(this);
 
     this.addCommand({
       id: "vuepress-publisher-publish",
       name: t("githubPublish") as string,
       callback: () => {
         getGithubRepoInfo(this).then(
-          (res)=>{
+          (res) => {
             console.log(res)
           }
         )
+      }
+    })
+
+    this.addCommand({
+      id: "vuepress-publisher-test",
+      name: "Test",
+      callback: async () => {
+        console.log(await this.formatter.replaceChart(`\`\`\`chart
+type: bar
+labels: [Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday, "next Week", "next Month"]
+series:
+  - title: Title 1
+    data: [1, 2, 3, 4, 5, 6, 7, 8, 9]
+  - title: Title 2
+    data: [5, 4, 3, 2, 1, 0, -1, -2, -3]
+\`\`\``));
       }
     })
   }

@@ -13,17 +13,6 @@ export class VuepressPublisherSettingTab extends PluginSettingTab {
     containerEl.empty();
 
     new Setting(containerEl)
-      .setName("GitHub Username")
-      .setDesc("Your GitHub Username.")
-      .addText((text) =>
-        text
-          .onChange(async (value) => {
-            this.plugin.settings.username = value;
-            await this.plugin.saveSettings();
-          })
-      );
-
-    new Setting(containerEl)
       .setName(t("githubRepo") as string)
       .setDesc(t("githubRepoDesc") as string)
       .addText((text) =>
@@ -39,12 +28,12 @@ export class VuepressPublisherSettingTab extends PluginSettingTab {
     new Setting(containerEl)
       .setName(t("githubToken") as string)
       .setDesc(t("githubTokenDesc") as string)
-      .addText((text)=>{
-        text.setValue(this.plugin.settings && this.plugin.settings.github.token? this.plugin.settings.github.token : '')
-        .onChange(async (value)=>{
-          this.plugin.settings.github.token = value;
-          await this.plugin.saveSettings()
-        })
+      .addText((text) => {
+        text.setValue(this.plugin.settings && this.plugin.settings.github.token ? this.plugin.settings.github.token : '')
+          .onChange(async (value) => {
+            this.plugin.settings.github.token = value;
+            await this.plugin.saveSettings()
+          })
       })
 
     new Setting(containerEl)

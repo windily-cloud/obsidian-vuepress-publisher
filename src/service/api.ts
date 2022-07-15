@@ -1,7 +1,9 @@
 import Request from './request'
 import VuepressPublisher from 'main'
-import { Notice } from 'obsidian'
+import { Notice, TFile } from 'obsidian'
 import t from '../i18n'
+
+type PublisherType = "github" | "gitee"
 
 export function getGithubRepoInfo(plugin: VuepressPublisher) {
   const service = new Request("github", plugin)
@@ -15,4 +17,21 @@ export function getGithubRepoInfo(plugin: VuepressPublisher) {
     url: `/repos/${plugin.settings.github.repoName}`,
     method: "get"
   })
+}
+
+export class CloudHandler {
+  plugin: VuepressPublisher;
+  constructor(plugin: VuepressPublisher) {
+    this.plugin = plugin;
+  }
+
+  async getPublisher(): Promise<PublisherType> {
+    return Promise.resolve("github");
+  }
+  async updateFile(file: TFile, targetPath: string) {
+
+  }
+  async deleteFile(targetPath: string) {
+
+  }
 }
