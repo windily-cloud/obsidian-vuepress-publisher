@@ -1,6 +1,6 @@
 import { Plugin } from 'obsidian'
 import { VuepressPublisherSettingTab } from './settings';
-import { CloudHandler, getGithubRepoInfo } from 'service/api';
+import { CloudHandler, getGithubRepoInfo } from './service/api';
 import t from './i18n'
 import { Formatter } from './formatFile';
 interface VuepressPublisherSettings {

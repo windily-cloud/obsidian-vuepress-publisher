@@ -26,6 +26,8 @@
   },
   "dependencies": {
     "axios": "^0.27.2",
+    "obsidian-dataview": "^0.5.41",
+    "path": "^0.12.7",
     "vue": "^3.2.37"
   }
 }
