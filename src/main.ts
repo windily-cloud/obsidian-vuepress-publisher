@@ -4,24 +4,27 @@ import { CloudHandler, getGithubRepoInfo } from './service/api';
 import t from './i18n'
 import { Formatter } from './formatFile';
 interface VuepressPublisherSettings {
-  github?: {
-    repoName: string,
-    token: string
-  },
-  gitee?: {
-    repoName: string,
-    token: string
-  }
-  assetsFolder: string;
-  repo: string;
+  publishFolder?: string
+  publishKey?: string
+  githubRepo?: string
+  excludeFolder?: string
+  excludeFile?: string
+  githubVuepressConfigFile?: string
+  giteeVuepressConfigFile?: string
+  githubSSHKey?: string
+  giteeRepo?: string
+  giteeSSHKey?: string
+  assetsFolder?: string
 }
 
 const DEFAULT_SETTINGS: Partial<VuepressPublisherSettings> = {
-  github: {
-    repoName: "",
-    token: ""
-  },
-  assetsFolder: "docs/assets",
+  publishFolder: "",
+  publishKey: "publish",
+  githubRepo: "",
+  githubSSHKey: "",
+  githubVuepressConfigFile: "",
+  giteeVuepressConfigFile: "",
+  assetsFolder: ""
 };
 
 export default class VuepressPublisher extends Plugin {
