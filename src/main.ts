@@ -1,24 +1,28 @@
 import { Plugin } from 'obsidian'
 import { VuepressPublisherSettingTab } from './settings';
-import { getGithubRepoInfo } from 'service/api';
+import { getGithubRepoInfo } from './service/api';
 import t from './i18n'
 interface VuepressPublisherSettings {
-  github?: {
-    repoName: string,
-    token: string
-  },
-  gitee?: {
-    repoName: string,
-    token: string
-  }
+  publishFolder?: string
+  publishKey?: string
+  githubRepo?: string
+  excludeFolder?: string
+  excludeFile?: string
+  githubVuepressConfigFile?: string
+  giteeVuepressConfigFile?: string
+  githubSSHKey?: string
+  giteeRepo?: string
+  giteeSSHKey?: string
 }
 
 const DEFAULT_SETTINGS: Partial<VuepressPublisherSettings> = {
-  github: {
-    repoName: "",
-    token: ""
-  }
-};
+  publishFolder: "",
+  publishKey: "publish",
+  githubRepo: "",
+  githubSSHKey: "",
+  githubVuepressConfigFile: "",
+  giteeVuepressConfigFile: ""
+}
 
 export default class VuepressPublisher extends Plugin {
   settings: VuepressPublisherSettings;
@@ -27,14 +31,14 @@ export default class VuepressPublisher extends Plugin {
     console.log('loading Vuepress Publisher...')
     await this.loadSettings()
     //Setting
-    this.addSettingTab(new VuepressPublisherSettingTab(this.app, this));
+    this.addSettingTab(new VuepressPublisherSettingTab(this));
 
     this.addCommand({
       id: "vuepress-publisher-publish",
       name: t("githubPublish") as string,
       callback: () => {
         getGithubRepoInfo(this).then(
-          (res)=>{
+          (res) => {
             console.log(res)
           }
         )

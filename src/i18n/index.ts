@@ -38,6 +38,6 @@ export interface StringFunc {
 	(params: string): string;
 }
 
-export default function t(str: keyof typeof enUS): string | StringFunc {
+export default function t(str: keyof typeof enUS | string): string | StringFunc {
 	return (locale && locale[str]) || enUS[str];
 }

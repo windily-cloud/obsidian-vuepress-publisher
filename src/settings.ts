@@ -1,39 +1,22 @@
 import VuepressPublisher from "./main";
-import { App, PluginSettingTab, Setting } from "obsidian";
-import t from './i18n'
+import { PluginSettingTab} from "obsidian";
+import { createApp } from "vue";
+import type { App as VueApp } from "vue";
+import SettingModal from './ui/SettingModal/Index.vue'
 export class VuepressPublisherSettingTab extends PluginSettingTab {
-  constructor(app: App, public plugin: VuepressPublisher) {
+  settingApp: VueApp
+  constructor(public plugin: VuepressPublisher) {
     super(app, plugin);
     this.plugin = plugin;
   }
 
   display(): void {
-    let { containerEl } = this;
+    this.settingApp = createApp(SettingModal)
+    this.settingApp.config.globalProperties.plugin = this.plugin
+    this.settingApp.mount(this.containerEl)
+  }
 
-    containerEl.empty();
-
-    new Setting(containerEl)
-      .setName(t("githubRepo") as string)
-      .setDesc(t("githubRepoDesc") as string)
-      .addText((text) =>
-        text
-          .setPlaceholder(t("githubRepoPlaceholder") as string)
-          .setValue(this.plugin.settings && this.plugin.settings.github.repoName ? this.plugin.settings.github.repoName : '')
-          .onChange(async (value) => {
-            this.plugin.settings.github.repoName = value;
-            await this.plugin.saveSettings();
-          })
-      );
-
-    new Setting(containerEl)
-      .setName(t("githubToken") as string)
-      .setDesc(t("githubTokenDesc") as string)
-      .addText((text)=>{
-        text.setValue(this.plugin.settings && this.plugin.settings.github.token? this.plugin.settings.github.token : '')
-        .onChange(async (value)=>{
-          this.plugin.settings.github.token = value;
-          await this.plugin.saveSettings()
-        })
-      })
+  hide():void {
+      this.settingApp.unmount()
   }
 }

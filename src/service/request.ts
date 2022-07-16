@@ -26,7 +26,7 @@ class Request {
     })
   }
 
-  interceptor() {
+  private interceptor() {
     this.instance.interceptors.request.use(
       (config) => {
         if (this.token) {
