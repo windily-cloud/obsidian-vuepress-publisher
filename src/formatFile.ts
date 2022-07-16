@@ -1,8 +1,8 @@
 import { parseYaml, stringifyYaml, TFile } from "obsidian";
 import VuepressPublisher from './main';
 import { relative, dirname, basename, join } from "path";
-import { CloudHandler } from './service/api';
-//import { Failure, getAPI, Success } from "obsidian-dataview";
+import { CloudHandler } from 'service/api';
+import { Failure, getAPI, Success } from "obsidian-dataview";
 
 export class Formatter {
     plugin: VuepressPublisher;
@@ -14,7 +14,7 @@ export class Formatter {
     }
     async formatFile(file: TFile): Promise<string> {
         let data = await app.vault.read(file);
-        //data = await this.replaceDataView(data, file.path);
+        data = await this.replaceDataView(data, file.path);
         data = this.replaceAdmonition(data);
         data = this.replaceChart(data);
         data = this.replaceEChart(data);
@@ -54,33 +54,33 @@ export class Formatter {
         return data;
     }
 
-    // async replaceDataView(data: string, filePath: string): Promise<string> {
-    //     let dv = getAPI();
-    //     if (dv === undefined) return data;
-    //     let dataviewPattern = /(?<separator>`*)dataview\n(?<content>[\s\S]*)\n?\k<separator>/gu;
-    //     for (let match of data.matchAll(dataviewPattern)) {
-    //         let { separator, content } = match.groups;
-    //         let res = await dv.queryMarkdown(content);
-    //         if (res.successful) {
-    //             data = data.replace(match[0], res.value);
-    //         }
-    //         else {
-    //             data = data.replace(match[0], (res as Failure<string, string>).error);
-    //         }
-    //     }
-    //     let dataviewJSPattern = /(?<separator>`*)dataviewjs\n(?<content>[\s\S]*)\n?\k<separator>/gu;
-    //     for (let match of data.matchAll(dataviewJSPattern)) {
-    //         let { separator, content } = match.groups;
-    //         let res = await dv.queryMarkdown(content);
-    //         if (res.successful) {
-    //             data = data.replace(match[0], res.value);
-    //         }
-    //         else {
-    //             data = data.replace(match[0], (res as Failure<string, string>).error);
-    //         }
-    //     }
-    //     return data;
-    // }
+    async replaceDataView(data: string, filePath: string): Promise<string> {
+        let dv = getAPI();
+        if (dv === undefined) return data;
+        let dataviewPattern = /(?<separator>`*)dataview\n(?<content>[\s\S]*)\n?\k<separator>/gu;
+        for (let match of data.matchAll(dataviewPattern)) {
+            let { separator, content } = match.groups;
+            let res = await dv.queryMarkdown(content);
+            if (res.successful) {
+                data = data.replace(match[0], res.value);
+            }
+            else {
+                data = data.replace(match[0], (res as Failure<string, string>).error);
+            }
+        }
+        let dataviewJSPattern = /(?<separator>`*)dataviewjs\n(?<content>[\s\S]*)\n?\k<separator>/gu;
+        for (let match of data.matchAll(dataviewJSPattern)) {
+            let { separator, content } = match.groups;
+            let res = await dv.queryMarkdown(content);
+            if (res.successful) {
+                data = data.replace(match[0], res.value);
+            }
+            else {
+                data = data.replace(match[0], (res as Failure<string, string>).error);
+            }
+        }
+        return data;
+    }
 
     replaceAdmonition(data: string): string {
         let admonitionToVuepress = new Map<string, string>();
