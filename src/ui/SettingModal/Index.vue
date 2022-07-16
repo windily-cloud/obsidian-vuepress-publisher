@@ -37,7 +37,7 @@
                 <SettingItem :setting-name="(t('vuepressConfigFile') as string)" setting-desc="">
                     <button :aria-label="(t('newConfigTip') as string)" v-if="!plugin.settings['githubVuepressConfigFile']" @click="handleCreateDefaultVuepressConfigFile('github')">+</button>
                     <input type="text" :value="plugin.settings['githubVuepressConfigFile']" @change="handleSaveSettings($event, 'githubVuepressConfigFile')">
-                    <button v-if="plugin.settings['githubVuepressConfigFile']" @click="handleOpenSettingFile(plugin.settings['githubVuepressConfigFile'])">open</button>
+                    <button v-if="plugin.settings['githubVuepressConfigFile']" @click="handleOpenSettingFile(plugin.settings['githubVuepressConfigFile'] as string)">open</button>
                 </SettingItem>
             </div>
 
@@ -53,7 +53,7 @@
                 <SettingItem :setting-name="(t('vuepressConfigFile') as string)" setting-desc="">
                     <button :aria-label="(t('newConfigTip') as string)" v-if="!plugin.settings['giteeVuepressConfigFile']" @click="handleCreateDefaultVuepressConfigFile('gitee')">+</button>
                     <input type="text" :value="plugin.settings['giteeVuepressConfigFile']" @change="handleSaveSettings($event, 'giteeVuepressConfigFile')">
-                    <button v-if="plugin.settings['giteeVuepressConfigFile']" @click="handleOpenSettingFile(plugin.settings['giteeVuepressConfigFile'])">open</button>
+                    <button v-if="plugin.settings['giteeVuepressConfigFile']" @click="handleOpenSettingFile(plugin.settings['giteeVuepressConfigFile'] as string)">open</button>
                 </SettingItem>
             </div>
         </div>
@@ -78,16 +78,16 @@ const activeClass  = ref(0)
 
 
 //method
-function handleActive(index){
+function handleActive(index:number){
     activeClass.value = index
 }
 
-async function handleSaveSettings(event, setting){
+async function handleSaveSettings(event:any, setting:string){
     plugin.settings[setting] = event.target.value
     await plugin.saveSettings()
 }
 
-async function handleOpenSettingFile(fileName){
+async function handleOpenSettingFile(fileName:string){
    const tfile =  app.metadataCache.getFirstLinkpathDest(fileName, "")
    if(!tfile){return}
    await app.workspace.getLeaf(false).openFile(tfile)
@@ -100,7 +100,7 @@ async function handleCreateDefaultVuepressConfigFile(blog: "github" | "gitee"){
     await app.fileManager.createNewMarkdownFile('', `vuepress-${blog}-config`, DefaultVuepressConfigContent)
     plugin.settings[`${blog}VuepressConfigFile`] = `vuepress-${blog}-config`
     await plugin.saveSettings()
-    handleOpenSettingFile(plugin.settings[`${blog}VuepressConfigFile`])
+    handleOpenSettingFile(plugin.settings[`${blog}VuepressConfigFile`] as string)
 }
 
 </script>

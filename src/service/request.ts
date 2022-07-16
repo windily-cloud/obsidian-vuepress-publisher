@@ -10,10 +10,10 @@ class Request {
   constructor(public type: PublisherType, public plugin: VuepressPublisher) {
     if (type === "github") {
       this.baseUrl = "https://api.github.com/"
-      this.token = this.plugin.settings && this.plugin.settings.github.token ? this.plugin.settings.github.token : ''
+      this.token = this.plugin.settings && this.plugin.settings.githubSSHKey ? this.plugin.settings.githubSSHKey : ''
     } else if (type === "gitee") {
       this.baseUrl = "https://gitee.com/api/v5/"
-      this.token = this.plugin.settings && this.plugin.settings.github.token ? this.plugin.settings.github.token : ''
+      this.token = this.plugin.settings && this.plugin.settings.giteeSSHKey ? this.plugin.settings.giteeSSHKey : ''
     } else {
       this.baseUrl = ""
       this.token = ""

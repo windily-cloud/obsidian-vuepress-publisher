@@ -1,10 +1,12 @@
 import { Plugin } from 'obsidian'
 import { VuepressPublisherSettingTab } from './settings';
-import { getGithubRepoInfo } from './service/api';
+import { CloudHandler, getGithubRepoInfo } from './service/api';
 import t from './i18n'
+import { Formatter } from './formatFile';
 interface VuepressPublisherSettings {
   publishFolder?: string
   publishKey?: string
+  assetsFolder?: string
   githubRepo?: string
   excludeFolder?: string
   excludeFile?: string
@@ -21,17 +23,23 @@ const DEFAULT_SETTINGS: Partial<VuepressPublisherSettings> = {
   githubRepo: "",
   githubSSHKey: "",
   githubVuepressConfigFile: "",
-  giteeVuepressConfigFile: ""
+  giteeVuepressConfigFile: "",
+  assetsFolder: ""
 }
 
 export default class VuepressPublisher extends Plugin {
   settings: VuepressPublisherSettings;
+  cloudHandler: CloudHandler;
+  formatter: Formatter;
 
   async onload(): Promise<void> {
     console.log('loading Vuepress Publisher...')
     await this.loadSettings()
     //Setting
     this.addSettingTab(new VuepressPublisherSettingTab(this));
+
+    this.cloudHandler = new CloudHandler(this);
+    this.formatter = new Formatter(this);
 
     this.addCommand({
       id: "vuepress-publisher-publish",
@@ -42,6 +50,14 @@ export default class VuepressPublisher extends Plugin {
             console.log(res)
           }
         )
+      }
+    })
+
+    this.addCommand({
+      id: "vuepress-publisher-test",
+      name: "Test",
+      callback: async () => {
+
       }
     })
   }
