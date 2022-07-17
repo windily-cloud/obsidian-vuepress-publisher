@@ -2,7 +2,7 @@ import { Plugin } from 'obsidian'
 import { VuepressPublisherSettingTab } from './settings';
 import { CloudHandler, getGithubRepoInfo } from './service/api';
 import t from './i18n'
-import { Formatter } from './formatFile';
+import Formatter from './processor/formatter'
 
 
 export interface VuepressPublisherSettings {
@@ -19,7 +19,6 @@ export interface VuepressPublisherSettings {
 
   excludeFolder?: string
   excludeFile?: string
-  assetsFolder?: string
 }
 
 const DEFAULT_SETTINGS: Partial<VuepressPublisherSettings> = {
@@ -28,8 +27,7 @@ const DEFAULT_SETTINGS: Partial<VuepressPublisherSettings> = {
   githubRepo: "",
   githubSSHKey: "",
   githubVuepressConfigFile: "",
-  giteeVuepressConfigFile: "",
-  assetsFolder: "docs/images"
+  giteeVuepressConfigFile: ""
 };
 
 export default class VuepressPublisher extends Plugin {
@@ -61,8 +59,9 @@ export default class VuepressPublisher extends Plugin {
       id: "vuepress-publisher-test",
       name: "Test",
       callback: async () => {
-        const response = await this.cloudHandler.validateGitHubRepo(this.settings.githubRepo)
-        console.log(response);
+        const currentFile = app.workspace.getActiveFile()
+        const result = this.formatter.replaceAdmonition(await app.vault.cachedRead(currentFile))
+        console.log(result)
       }
     })
   }
