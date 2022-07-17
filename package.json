@@ -4,7 +4,7 @@
   "description": "A obsidian plugin for publishing vuepress blog.",
   "main": "src/main.ts",
   "scripts": {
-    "build": "vue-tsc --noEmit && vite build",
+    "build": "vue-tsc --noEmit --skipLibCheck && vite build",
     "dev": "vite build --watch"
   },
   "keywords": [
