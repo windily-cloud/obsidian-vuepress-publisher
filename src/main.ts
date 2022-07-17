@@ -3,17 +3,23 @@ import { VuepressPublisherSettingTab } from './settings';
 import { CloudHandler, getGithubRepoInfo } from './service/api';
 import t from './i18n'
 import { Formatter } from './formatFile';
+import Request from "./service/request"
+
+
 interface VuepressPublisherSettings {
   publishFolder?: string
   publishKey?: string
+
   githubRepo?: string
-  excludeFolder?: string
-  excludeFile?: string
-  githubVuepressConfigFile?: string
-  giteeVuepressConfigFile?: string
   githubSSHKey?: string
+  githubVuepressConfigFile?: string
+
   giteeRepo?: string
   giteeSSHKey?: string
+  giteeVuepressConfigFile?: string
+
+  excludeFolder?: string
+  excludeFile?: string
   assetsFolder?: string
 }
 
@@ -56,15 +62,12 @@ export default class VuepressPublisher extends Plugin {
       id: "vuepress-publisher-test",
       name: "Test",
       callback: async () => {
-        console.log(await this.formatter.replaceChart(`\`\`\`chart
-type: bar
-labels: [Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday, "next Week", "next Month"]
-series:
-  - title: Title 1
-    data: [1, 2, 3, 4, 5, 6, 7, 8, 9]
-  - title: Title 2
-    data: [5, 4, 3, 2, 1, 0, -1, -2, -3]
-\`\`\``));
+        let github=new Request("github",this);
+        const res = await github.request({
+          url: `/repos/${this.settings.githubRepo}`,
+          method: "get"
+        })
+        console.log(res.status,res.statusText);
       }
     })
   }
