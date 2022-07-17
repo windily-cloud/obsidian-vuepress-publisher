@@ -7,6 +7,7 @@ export default {
 	excludeFile: "Exclude File",
 	vuepressConfigFile: "Vuepress Config File",
 	newConfigTip: "Generate default vuepress Config file",
+	assetsFolder: "Assets Folder",
 
 	githubRepo: "Github Repo",
 	githubRepoDesc: "github repository",

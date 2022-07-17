@@ -24,7 +24,7 @@ const DEFAULT_SETTINGS: Partial<VuepressPublisherSettings> = {
   githubSSHKey: "",
   githubVuepressConfigFile: "",
   giteeVuepressConfigFile: "",
-  assetsFolder: ""
+  assetsFolder: "docs/images"
 };
 
 export default class VuepressPublisher extends Plugin {

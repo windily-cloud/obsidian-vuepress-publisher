@@ -17,6 +17,9 @@
                 <SettingItem :setting-name="(t('publishKey') as string)" setting-desc="">
                     <input type="text" placeholder="publish" :value="plugin.settings['publishKey']" @change="handleSaveSettings($event, 'publishKey')">
                 </SettingItem>
+                <SettingItem :setting-name="(t('assetsFolder') as string)" setting-desc="">
+                    <input type="text" placeholder="docs/images" :value="plugin.settings['assetsFolder']" @change="handleSaveSettings($event, 'assetsFolder')">
+                </SettingItem>
                 <SettingItem :setting-name="(t('excludeFolder') as string)" setting-desc="">
                     <textarea  placeholder="folder1,folder2" :value="plugin.settings['excludeFolder']" @change="handleSaveSettings($event, 'excludeFolder')"/>
                 </SettingItem>
@@ -61,7 +64,7 @@
 </template>
   
 <script setup lang='ts'>
-import {ref, getCurrentInstance, reactive, computed} from 'vue'
+import {ref, getCurrentInstance} from 'vue'
 import t from '../../i18n'
 import {DefaultVuepressConfigContent} from '../../config/DefaultVuepressConfig'
 import SettingItem from './SettingItem.vue'
