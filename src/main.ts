@@ -6,7 +6,7 @@ import { Formatter } from './formatFile';
 import Request from "./service/request"
 
 
-interface VuepressPublisherSettings {
+export interface VuepressPublisherSettings {
   publishFolder?: string
   publishKey?: string
 
@@ -44,7 +44,7 @@ export default class VuepressPublisher extends Plugin {
     this.addSettingTab(new VuepressPublisherSettingTab(this));
 
     this.cloudHandler = new CloudHandler(this);
-    this.formatter = new Formatter(this);
+    this.formatter = new Formatter(this.settings);
 
     this.addCommand({
       id: "vuepress-publisher-publish",

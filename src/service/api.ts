@@ -229,7 +229,7 @@ export class CloudHandler {
       return ;
     }
     else {
-      return Promise.reject("${targetPath}: No such file in Gitee Repository!");
+      return Promise.reject(`${targetPath}: No such file in Gitee Repository!`);
     }
   }
 }
