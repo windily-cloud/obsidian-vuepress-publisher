@@ -2,7 +2,7 @@ import VuepressPublisher from "./main";
 import { PluginSettingTab} from "obsidian";
 import { createApp } from "vue";
 import type { App as VueApp } from "vue";
-import SettingModal from './ui/SettingModal/Index.vue'
+import SettingModal from './ui/SettingModal/SettingModal.vue'
 export class VuepressPublisherSettingTab extends PluginSettingTab {
   settingApp: VueApp
   constructor(public plugin: VuepressPublisher) {

@@ -1,18 +1,18 @@
 import Request from './request'
 import VuepressPublisher from 'main'
-import { Notice, TFile } from 'obsidian'
+import { Notice} from 'obsidian'
 import t from '../i18n'
 
 type PublisherType = "github" | "gitee"
 
-export class HTMLError extends Error{
+export class HTMLError extends Error {
   code: number;
   text: string;
-  constructor(code: number, text: string){
+  constructor(code: number, text: string) {
     super(`Error Code ${code}. ${text}`);
-    this.name=`HTML Error`;
-    this.code=code;
-    this.text=text;
+    this.name = `HTML Error`;
+    this.code = code;
+    this.text = text;
   }
 }
 
@@ -61,7 +61,7 @@ export class CloudHandler {
   }
 
   async getPublisher(): Promise<PublisherType> {
-    let { githubRepo, giteeRepo } = this.plugin.settings;
+    const { githubRepo, giteeRepo } = this.plugin.settings;
     if (githubRepo && await this.validateGitHubRepo(githubRepo)) {
       return "github";
     }
@@ -71,100 +71,100 @@ export class CloudHandler {
     return Promise.reject("No publisher available");
   }
   async updateFile(content: string, targetPath: string): Promise<void> {
-    let publisher = await this.getPublisher();
+    const publisher = await this.getPublisher();
     if (publisher === "github") {
-      await this.updateGitHubFile(content,targetPath);
+      await this.updateGitHubFile(content, targetPath);
     }
     else if (publisher === "gitee") {
-      await this.updateGiteeFile(content,targetPath);
+      await this.updateGiteeFile(content, targetPath);
     }
   }
 
-  async updateGitHubFile(content: string, targetPath: string){
-    let github = new Request("github", this.plugin);
-    let { githubRepo: repo } = this.plugin.settings;
-    let getContentResult = await github.request({
+  async updateGitHubFile(content: string, targetPath: string) {
+    const github = new Request("github", this.plugin);
+    const { githubRepo: repo } = this.plugin.settings;
+    const getContentResult = await github.request({
       url: `/repos/${repo}/contents/${targetPath}`,
       method: "get"
     });
     if (getContentResult.status === 200) {
-      let { sha, type } = getContentResult.data;
+      const { sha, type } = getContentResult.data;
       if (type !== "file") {
         return Promise.reject("Content already exist and is not a file.");
       }
-      let updateContentResult=await github.request({
+      const updateContentResult = await github.request({
         url: `/repos/${repo}/contents/${targetPath}`,
         method: "put",
-        data:{
+        data: {
           message: `Update ${targetPath}.`,
           content,
           sha
         }
       });
-      if (updateContentResult.status!==201){
+      if (updateContentResult.status !== 201) {
         return Promise.reject(`Error Code ${updateContentResult.status}. ${updateContentResult.statusText}`);
       }
-      return ;
+      return;
     }
     else {
-      let createContentResult=await github.request({
+      const createContentResult = await github.request({
         url: `/repos/${repo}/contents/${targetPath}`,
         method: "put",
-        data:{
+        data: {
           message: `Create ${targetPath}.`,
           content
         }
       });
-      if (createContentResult.status!==201){
+      if (createContentResult.status !== 201) {
         return Promise.reject(`Error Code ${createContentResult.status}. ${createContentResult.statusText}`);
       }
-      return ;
-      }
+      return;
+    }
   }
 
-  async updateGiteeFile(content: string, targetPath: string){
-    let gitee = new Request("gitee", this.plugin);
-    let { giteeRepo: repo } = this.plugin.settings;
-    let getContentResult = await gitee.request({
+  async updateGiteeFile(content: string, targetPath: string) {
+    const gitee = new Request("gitee", this.plugin);
+    const { giteeRepo: repo } = this.plugin.settings;
+    const getContentResult = await gitee.request({
       url: `/repos/${repo}/contents/${targetPath}`,
       method: "get"
     });
     if (getContentResult.status === 200) {
-      let { sha, type } = getContentResult.data;
+      const { sha, type } = getContentResult.data;
       if (type !== "file") {
         return Promise.reject("Content already exist and is not a file.");
       }
-      let updateContentResult=await gitee.request({
+      const updateContentResult = await gitee.request({
         url: `/repos/${repo}/contents/${targetPath}`,
         method: "put",
-        data:{
+        data: {
           message: `Update ${targetPath}.`,
           content,
           sha
         }
       });
-      if (updateContentResult.status!==201){
+      if (updateContentResult.status !== 201) {
         return Promise.reject(`Error Code ${updateContentResult.status}. ${updateContentResult.statusText}`);
       }
-      return ;
+      return;
     }
     else {
-      let createContentResult=await gitee.request({
+      const createContentResult = await gitee.request({
         url: `/repos/${repo}/contents/${targetPath}`,
         method: "post",
-        data:{
+        data: {
           message: `Create ${targetPath}.`,
           content
         }
       });
-      if (createContentResult.status!==201){
+      if (createContentResult.status !== 201) {
         return Promise.reject(`Error Code ${createContentResult.status}. ${createContentResult.statusText}`);
       }
-      return ;
+      return;
     }
   }
   async deleteFile(targetPath: string) {
-    let publisher = await this.getPublisher();
+    const publisher = await this.getPublisher();
     if (publisher === "github") {
       await this.deleteGitHubFile(targetPath);
     }
@@ -173,60 +173,60 @@ export class CloudHandler {
     }
   }
 
-  async deleteGitHubFile(targetPath: string){
-    let github = new Request("github", this.plugin);
-    let { githubRepo: repo } = this.plugin.settings;
-    let getContentResult = await github.request({
+  async deleteGitHubFile(targetPath: string) {
+    const github = new Request("github", this.plugin);
+    const { githubRepo: repo } = this.plugin.settings;
+    const getContentResult = await github.request({
       url: `/repos/${repo}/contents/${targetPath}`,
       method: "get"
     });
     if (getContentResult.status === 200) {
-      let { sha, type } = getContentResult.data;
+      const { sha, type } = getContentResult.data;
       if (type !== "file") {
         return Promise.reject(`${targetPath}: Content already exist and is not a file.`);
       }
-      let updateContentResult=await github.request({
+      const updateContentResult = await github.request({
         url: `/repos/${repo}/contents/${targetPath}`,
         method: "delete",
-        data:{
+        data: {
           message: `Delete ${targetPath}.`,
           sha
         }
       });
-      if (updateContentResult.status!==201){
+      if (updateContentResult.status !== 201) {
         return Promise.reject(`Error Code ${updateContentResult.status}. ${updateContentResult.statusText}`);
       }
-      return ;
+      return;
     }
     else {
       return Promise.reject(`${targetPath}: No such file in GitHub repository!`)
     }
   }
 
-  async deleteGiteeFile(targetPath: string){
-    let gitee = new Request("gitee", this.plugin);
-    let { giteeRepo: repo } = this.plugin.settings;
-    let getContentResult = await gitee.request({
+  async deleteGiteeFile(targetPath: string) {
+    const gitee = new Request("gitee", this.plugin);
+    const { giteeRepo: repo } = this.plugin.settings;
+    const getContentResult = await gitee.request({
       url: `/repos/${repo}/contents/${targetPath}`,
       method: "delete"
     });
     if (getContentResult.status === 200) {
-      let { sha, type } = getContentResult.data;
+      const { sha, type } = getContentResult.data;
       if (type !== "file") {
         return Promise.reject(`${targetPath}: Content already exist and is not a file.`);
       }
-      let updateContentResult=await gitee.request({
+      const updateContentResult = await gitee.request({
         url: `/repos/${repo}/contents/${targetPath}`,
         method: "delete",
-        data:{
+        data: {
           message: `Delete ${targetPath}.`,
           sha
         }
       });
-      if (updateContentResult.status!==201){
+      if (updateContentResult.status !== 201) {
         return Promise.reject(`Error Code ${updateContentResult.status}. ${updateContentResult.statusText}`);
       }
-      return ;
+      return;
     }
     else {
       return Promise.reject(`${targetPath}: No such file in Gitee Repository!`);

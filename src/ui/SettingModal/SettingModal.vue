@@ -86,8 +86,8 @@ function handleActive(index:number){
     activeClass.value = index
 }
 
-async function handleSaveSettings(event:any, setting:string){
-    plugin.settings[setting] = event.target.value
+async function handleSaveSettings(event: Event, setting:string){
+    plugin.settings[setting] = (event.target as HTMLInputElement).value
     await plugin.saveSettings()
 }
 
@@ -98,11 +98,13 @@ async function handleOpenSettingFile(fileName:string){
         return
     }
    await app.workspace.getLeaf(false).openFile(tfile)
+   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
    //@ts-ignore
    app.workspace.closeables[0].close()
 }
 
 async function handleCreateDefaultVuepressConfigFile(blog: "github" | "gitee"){
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     //@ts-ignore
     await app.fileManager.createNewMarkdownFile('', `vuepress-${blog}-config`, DefaultVuepressConfigContent)
     plugin.settings[`${blog}VuepressConfigFile`] = `vuepress-${blog}-config`

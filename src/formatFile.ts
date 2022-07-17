@@ -1,5 +1,5 @@
 import { parseYaml } from "obsidian";
-import {VuepressPublisherSettings} from './main';
+import { VuepressPublisherSettings } from './main';
 import { relative, dirname, basename, join } from "path";
 import { Failure, getAPI } from "obsidian-dataview";
 
@@ -10,7 +10,7 @@ export class Formatter {
         this.settings = settings;
     }
     async formatFile(content: string, filePath: string): Promise<string> {
-        content = await this.replacecontentView(content, filePath);
+        content = await this.replacecontentView(content);
         content = this.replaceAdmonition(content);
         content = this.replaceChart(content);
         content = this.replaceEChart(content);
@@ -20,26 +20,27 @@ export class Formatter {
     }
 
     replaceWikiLinks(content: string, filePath: string): string {
-        let wikiLinkPattern = /\[\[(?<path>[^|]*?)(?:\|(?<text>[^|]*?))?\]\]/gu;
+        const wikiLinkPattern = /\[\[(?<path>[^|]*?)(?:\|(?<text>[^|]*?))?\]\]/gu;
 
-        for (let match of content.matchAll(wikiLinkPattern)) {
-            let { path, text } = match.groups;
-            let linkPattern = /(?<link>(?:[^#]*))(?<title>#[^#]*)?/u;
-            let { link, title } = path.match(linkPattern).groups;
-            let toFile = app.metadataCache.getFirstLinkpathDest(link, filePath);
-            let toFilePath = join(relative(filePath, dirname(toFile.path)), basename(filePath, ".md"));
+        for (const match of content.matchAll(wikiLinkPattern)) {
+            const { path, text } = match.groups;
+            const linkPattern = /(?<link>(?:[^#]*))(?<title>#[^#]*)?/u;
+            const { link, title } = path.match(linkPattern).groups;
+            const toFile = app.metadataCache.getFirstLinkpathDest(link, filePath);
+            const toFilePath = join(relative(filePath, dirname(toFile.path)), basename(filePath, ".md"));
             content = content.replace(match[0], `[${text ? text : path}](${toFilePath + (title ?? "")})`);
         }
         return content;
     }
 
     replaceAssetsLinks(content: string): string {
-        let linkPattern = /\[(?<text>[^\[\]]*?)\]\((?<link>[^\(\)]*?)\)/gu;
-        for (let match of content.matchAll(linkPattern)) {
-            let { text, link } = match.groups;
+        const linkPattern = /\[(?<text>[^[\]]*?)\]\((?<link>[^()]*?)\)/gu;
+        for (const match of content.matchAll(linkPattern)) {
+            const { text } = match.groups;
+            let { link } = match.groups;
             if (link.match(/https?:\/\//u) === null) {
-                let asset = app.vault.getAbstractFileByPath(link);
-                let cloudPath = this.settings.assetsFolder + asset.name;
+                const asset = app.vault.getAbstractFileByPath(link);
+                const cloudPath = this.settings.assetsFolder + asset.name;
                 link = cloudPath;
             }
             content.replace(match[0], `[${text ?? ""}](${link})`);
@@ -47,13 +48,13 @@ export class Formatter {
         return content;
     }
 
-    async replacecontentView(content: string, filePath: string): Promise<string> {
-        let dv = getAPI();
+    async replacecontentView(content: string): Promise<string> {
+        const dv = getAPI();
         if (dv === undefined) return content;
-        let contentviewPattern = /(?<separator>`*)dataview\n(?<content>[\s\S]*)\n?\k<separator>/gu;
-        for (let match of content.matchAll(contentviewPattern)) {
-            let { separator, content } = match.groups;
-            let res = await dv.queryMarkdown(content);
+        const contentviewPattern = /(?<separator>`*)dataview\n(?<content>[\s\S]*)\n?\k<separator>/gu;
+        for (const match of content.matchAll(contentviewPattern)) {
+            let { content } = match.groups;
+            const res = await dv.queryMarkdown(content);
             if (res.successful) {
                 content = content.replace(match[0], res.value);
             }
@@ -61,10 +62,10 @@ export class Formatter {
                 content = content.replace(match[0], (res as Failure<string, string>).error);
             }
         }
-        let contentviewJSPattern = /(?<separator>`*)dataviewjs\n(?<content>[\s\S]*)\n?\k<separator>/gu;
-        for (let match of content.matchAll(contentviewJSPattern)) {
-            let { separator, content } = match.groups;
-            let res = await dv.queryMarkdown(content);
+        const contentviewJSPattern = /(?<separator>`*)dataviewjs\n(?<content>[\s\S]*)\n?\k<separator>/gu;
+        for (const match of content.matchAll(contentviewJSPattern)) {
+            let { content } = match.groups;
+            const res = await dv.queryMarkdown(content);
             if (res.successful) {
                 content = content.replace(match[0], res.value);
             }
@@ -76,7 +77,7 @@ export class Formatter {
     }
 
     replaceAdmonition(content: string): string {
-        let admonitionToVuepress = new Map<string, string>();
+        const admonitionToVuepress = new Map<string, string>();
         admonitionToVuepress.set("tip", "tip");
         admonitionToVuepress.set("hint", "tip");
         admonitionToVuepress.set("important", "tip");
@@ -88,10 +89,11 @@ export class Formatter {
         admonitionToVuepress.set("danger", "danger");
         admonitionToVuepress.set("error", "danger");
         admonitionToVuepress.set("note", "note");
-        let admonitionPattern = /(?<separator>`*)ad-(?<type>[\S]+)\n(?:title: (?<title>.+))?\n(?<content>[\s\S]*)\n?\k<separator>/gu;
-        for (let match of content.matchAll(admonitionPattern)) {
-            let { separator, type, title, content } = match.groups;
-            let containerType = admonitionToVuepress.get(type);
+        const admonitionPattern = /(?<separator>`*)ad-(?<type>[\S]+)\n(?:title: (?<title>.+))?\n(?<content>[\s\S]*)\n?\k<separator>/gu;
+        for (const match of content.matchAll(admonitionPattern)) {
+            let { content } = match.groups;
+            const { type, title } = match.groups
+            const containerType = admonitionToVuepress.get(type);
             if (type !== undefined) {
                 content = content.replace(match[0], `::: ${containerType} ${title ?? ""}
 ${content}
@@ -102,9 +104,9 @@ ${content}
     }
 
     replaceChart(content: string): string {
-        let chartPattern = /(?<separator>`*)chart\n(?<content>[\s\S]*)\n?\k<separator>/gu;
-        for (let match of content.matchAll(chartPattern)) {
-            let { separator, content } = match.groups;
+        const chartPattern = /(?<separator>`*)chart\n(?<content>[\s\S]*)\n?\k<separator>/gu;
+        for (const match of content.matchAll(chartPattern)) {
+            let { content } = match.groups;
             content = content.replace(match[0], `::: chart
 
 \`\`\`json

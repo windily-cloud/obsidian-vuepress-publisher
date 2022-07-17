@@ -3,7 +3,6 @@ import { VuepressPublisherSettingTab } from './settings';
 import { CloudHandler, getGithubRepoInfo } from './service/api';
 import t from './i18n'
 import { Formatter } from './formatFile';
-import Request from "./service/request"
 
 
 export interface VuepressPublisherSettings {
@@ -74,9 +73,5 @@ export default class VuepressPublisher extends Plugin {
 
   async saveSettings() {
     await this.saveData(this.settings);
-  }
-
-
-  async onunload(): Promise<void> {
   }
 }
