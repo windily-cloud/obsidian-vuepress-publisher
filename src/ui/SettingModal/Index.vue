@@ -69,6 +69,7 @@ import t from '../../i18n'
 import {DefaultVuepressConfigContent} from '../../config/DefaultVuepressConfig'
 import SettingItem from './SettingItem.vue'
 import type VuepressPublisher from '../../main';
+import { Notice } from 'obsidian';
 //init
 const plugin = getCurrentInstance()?.appContext.config.globalProperties.plugin as VuepressPublisher
 if(!plugin){
@@ -92,7 +93,10 @@ async function handleSaveSettings(event:any, setting:string){
 
 async function handleOpenSettingFile(fileName:string){
    const tfile =  app.metadataCache.getFirstLinkpathDest(fileName, "")
-   if(!tfile){return}
+   if(!tfile){
+        new Notice("CannotFindSettingFile")
+        return
+    }
    await app.workspace.getLeaf(false).openFile(tfile)
    //@ts-ignore
    app.workspace.closeables[0].close()

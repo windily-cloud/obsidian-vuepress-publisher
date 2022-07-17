@@ -46,7 +46,7 @@ export class Formatter {
                 if (!(asset instanceof TFile)) { continue; }
                 if (asset.stat.size > 1024 * 1024 * 10) { continue; }
                 let cloudPath = this.plugin.settings.assetsFolder + asset.name;
-                await this.cloudHandler.updateFile(asset, cloudPath);
+                await this.cloudHandler.updateFile(asset.path, cloudPath);
                 link = cloudPath;
             }
             data.replace(match[0], `[${text ?? ""}](${link})`);

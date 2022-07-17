@@ -62,12 +62,8 @@ export default class VuepressPublisher extends Plugin {
       id: "vuepress-publisher-test",
       name: "Test",
       callback: async () => {
-        let github=new Request("github",this);
-        const res = await github.request({
-          url: `/repos/${this.settings.githubRepo}`,
-          method: "get"
-        })
-        console.log(res.status,res.statusText);
+        const response = await this.cloudHandler.validateGitHubRepo(this.settings.githubRepo)
+        console.log(response);
       }
     })
   }
