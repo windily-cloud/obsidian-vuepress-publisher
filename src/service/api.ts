@@ -70,9 +70,7 @@ export class CloudHandler {
     }
     return Promise.reject("No publisher available");
   }
-  async updateFile(file: TFile, targetPath: string): Promise<void> {
-    let content=await app.vault.read(file);
-    if (content===null){return Promise.reject("File specified does not exist.");}
+  async updateFile(content: string, targetPath: string): Promise<void> {
     let publisher = await this.getPublisher();
     if (publisher === "github") {
       await this.updateGitHubFile(content,targetPath);
