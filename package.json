@@ -7,7 +7,8 @@
     "build": "vue-tsc --noEmit --skipLibCheck && vite build",
     "dev": "vite build --watch",
     "lint:fix":"eslint src/**/*.{js,jsx,vue,ts,tsx} --fix",
-    "test": "jest"
+    "test": "jest",
+    "test:api": "jest api.test.ts"
   },
   "keywords": [
     "obsidian"

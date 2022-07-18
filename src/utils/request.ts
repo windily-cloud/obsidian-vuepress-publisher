@@ -1,3 +1,4 @@
+import { VuepressPublisherSettings } from '../main';
 import axios, { AxiosInstance, AxiosRequestConfig } from "axios";
 import VuepressPublisher from "../main"
 
@@ -7,13 +8,13 @@ class Request {
   private baseUrl: string
   private token: string
   instance: AxiosInstance
-  constructor(public type: PublisherType, public plugin: VuepressPublisher) {
+  constructor(public type: PublisherType, public settings: VuepressPublisherSettings) {
     if (type === "github") {
       this.baseUrl = "https://api.github.com/"
-      this.token = this.plugin.settings && this.plugin.settings.githubSSHKey ? this.plugin.settings.githubSSHKey : ''
+      this.token = this.settings && this.settings.githubSSHKey ? this.settings.githubSSHKey : ''
     } else if (type === "gitee") {
       this.baseUrl = "https://gitee.com/api/v5/"
-      this.token = this.plugin.settings && this.plugin.settings.giteeSSHKey ? this.plugin.settings.giteeSSHKey : ''
+      this.token = this.settings && this.settings.giteeSSHKey ? this.settings.giteeSSHKey : ''
     } else {
       this.baseUrl = ""
       this.token = ""
