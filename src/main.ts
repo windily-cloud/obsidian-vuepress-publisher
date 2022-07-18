@@ -1,8 +1,8 @@
 import { Plugin } from 'obsidian'
 import { VuepressPublisherSettingTab } from './settings';
-import { CloudHandler, getGithubRepoInfo } from './service/api';
 import t from './i18n'
 import Formatter from './processor/formatter'
+import Publisher from './processor/publisher';
 
 
 export interface VuepressPublisherSettings {
@@ -32,7 +32,6 @@ const DEFAULT_SETTINGS: Partial<VuepressPublisherSettings> = {
 
 export default class VuepressPublisher extends Plugin {
   settings: VuepressPublisherSettings;
-  cloudHandler: CloudHandler;
   formatter: Formatter;
 
   async onload(): Promise<void> {
@@ -40,28 +39,17 @@ export default class VuepressPublisher extends Plugin {
     await this.loadSettings()
     this.addSettingTab(new VuepressPublisherSettingTab(this));
 
-    this.cloudHandler = new CloudHandler(this);
     this.formatter = new Formatter(this.settings);
-
-    this.addCommand({
-      id: "vuepress-publisher-publish",
-      name: t("githubPublish") as string,
-      callback: () => {
-        getGithubRepoInfo(this).then(
-          (res) => {
-            console.log(res)
-          }
-        )
-      }
-    })
 
     this.addCommand({
       id: "vuepress-publisher-test",
       name: "Test",
       callback: async () => {
-        const currentFile = app.workspace.getActiveFile()
-        const result = this.formatter.replaceAdmonition(await app.vault.cachedRead(currentFile))
-        console.log(result)
+        // const currentFile = app.workspace.getActiveFile()
+        // const result = this.formatter.replaceAdmonition(await app.vault.cachedRead(currentFile))
+        // console.log(result)
+        const publisher = new Publisher(this.settings, "github")
+        publisher.createGithubFile("This is a test file", "test.md")
       }
     })
   }

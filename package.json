@@ -6,8 +6,9 @@
   "scripts": {
     "build": "vue-tsc --noEmit --skipLibCheck && vite build",
     "dev": "vite build --watch",
-    "lint:fix": "eslint src/**/*.{js,jsx,vue,ts,tsx} --fix",
-    "test": "jest"
+    "lint:fix":"eslint src/**/*.{js,jsx,vue,ts,tsx} --fix",
+    "test": "jest",
+    "test:api": "jest api.test.ts"
   },
   "keywords": [
     "obsidian"
@@ -39,7 +40,6 @@
     "axios": "^0.27.2",
     "obsidian-dataview": "^0.5.41",
     "path": "^0.12.7",
-    "path-posix": "^1.0.0",
     "vue": "^3.2.37"
   }
 }
