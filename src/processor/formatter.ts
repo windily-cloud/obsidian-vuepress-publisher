@@ -6,14 +6,14 @@ class Content {
     content: string;
     sourcePath: string;
 
-    constructor(content: string, sourcePath: string = '') {
+    constructor(content: string, sourcePath = '') {
         this.content = content;
         this.sourcePath = sourcePath;
     }
 
     replaceExtended(regex: RegExp, replace: (match: RegExpMatchArray) => string): this {
         replace = replace.bind(this);
-        for (let match of this.content.matchAll(regex)) {
+        for (const match of this.content.matchAll(regex)) {
             this.content = this.content.replace(match[0], replace(match));
         }
         return this;
@@ -35,11 +35,11 @@ export default class Formatter {
 
     replaceLink(
         content: string,
-        filePath: string = '',
+        filePath = '',
         getLink: (filePath: string, sourcePath: string) => string = (filePath: string, sourcePath: string) =>
             app.metadataCache.getFirstLinkpathDest(filePath, sourcePath).path
     ) {
-        let settings = this.settings;
+        const settings = this.settings;
         return new Content(content, filePath)
             .replaceExtended(
                 /(?<!!)\[(?<alias>[^\[\]]*)?\]\((?<filePath>[^\(\)]+)(?<subPath>#[^\|#\(\)]*)?\)/gu,
@@ -72,7 +72,7 @@ export default class Formatter {
                         filePath = posix.join('/', posix.basename(filePath));
                         alias = alias ?? posix.basename(filePath);
                         if (alias.match(/^(?<width>\d+)(?:x(?<height>\d+))?$/u)) {
-                            let size = alias.includes('x') ? alias : alias + 'x';
+                            const size = alias.includes('x') ? alias : alias + 'x';
                             return `![${posix.basename(filePath)}](${filePath} =${
                                 alias.includes('x') ? alias : alias + 'x'
                             })`;

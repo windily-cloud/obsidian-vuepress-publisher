@@ -91,6 +91,6 @@ test
 });
 
 //chart
-describe('Chart', () => {});
+//describe('Chart', () => {});
 
-describe('Dataview', () => {});
+//describe('Dataview', () => {});

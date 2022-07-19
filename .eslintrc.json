@@ -24,5 +24,10 @@
         "@typescript-eslint"
     ],
     "rules": {
+        "prefer-const": ["error", {
+            "destructuring": "all",
+            "ignoreReadBeforeAssign": false
+        }],
+        "no-useless-escape": 0
     }
 }

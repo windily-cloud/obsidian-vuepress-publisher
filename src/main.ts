@@ -1,8 +1,9 @@
-import { Plugin } from 'obsidian'
+import { Plugin, TFile } from 'obsidian'
 import { VuepressPublisherSettingTab } from './settings';
 import t from './i18n'
 import Formatter from './processor/formatter'
 import Publisher from './processor/publisher';
+import Scanner from './processor/scanner';
 
 
 export interface VuepressPublisherSettings {
@@ -19,6 +20,16 @@ export interface VuepressPublisherSettings {
 
   excludeFolder?: string
   excludeFile?: string
+
+  publishedFiles?: Array<{
+    filePath: string
+    stat: {
+      ctime: number
+      mtime: number
+      size: number
+    }
+    status: "Add" | "Update" | "Delete" | "Published"
+  }>
 }
 
 const DEFAULT_SETTINGS: Partial<VuepressPublisherSettings> = {
@@ -27,7 +38,8 @@ const DEFAULT_SETTINGS: Partial<VuepressPublisherSettings> = {
   githubRepo: "",
   githubSSHKey: "",
   githubVuepressConfigFile: "",
-  giteeVuepressConfigFile: ""
+  giteeVuepressConfigFile: "",
+  publishedFiles: []
 };
 
 export default class VuepressPublisher extends Plugin {
@@ -48,8 +60,14 @@ export default class VuepressPublisher extends Plugin {
         // const currentFile = app.workspace.getActiveFile()
         // const result = this.formatter.replaceAdmonition(await app.vault.cachedRead(currentFile))
         // console.log(result)
-        const publisher = new Publisher(this.settings, "github")
-        publisher.createGithubFile("This is a test file", "test.md")
+        // const publisher = new Publisher(this.settings, "github")
+        // publisher.createGithubFile("This is a test file", "test.md")
+        const scanner = new Scanner(this.settings)
+        const markedFiles = scanner.getMarkedFiles()
+        const filesToPublish = scanner.getFileToPublish()
+        this.settings.publishedFiles = filesToPublish
+        this.saveSettings()
+        console.log("markedFiles", markedFiles, "filesToPublish", filesToPublish)
       }
     })
   }

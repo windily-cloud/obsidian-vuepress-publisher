@@ -6,9 +6,9 @@
   "scripts": {
     "build": "vue-tsc --noEmit --skipLibCheck && vite build",
     "dev": "vite build --watch",
-    "lint:fix":"eslint src/**/*.{js,jsx,vue,ts,tsx} --fix",
+    "lint:fix": "eslint src/**/*.{js,jsx,vue,ts,tsx} --fix",
     "test": "jest",
-    "test:api": "jest api.test.ts"
+    "test:api": "jest formatter.test.ts"
   },
   "keywords": [
     "obsidian"
