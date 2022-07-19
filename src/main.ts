@@ -44,14 +44,18 @@ const DEFAULT_SETTINGS: Partial<VuepressPublisherSettings> = {
 
 export default class VuepressPublisher extends Plugin {
   settings: VuepressPublisherSettings;
-  formatter: Formatter;
+  scanner: Scanner
+  formatter: Formatter
+  githubPublisher: Publisher
 
   async onload(): Promise<void> {
     console.log('loading Vuepress Publisher...')
     await this.loadSettings()
     this.addSettingTab(new VuepressPublisherSettingTab(this));
 
-    this.formatter = new Formatter(this.settings);
+    this.scanner = new Scanner(this.settings)
+    this.formatter = new Formatter(this.settings)
+    this.githubPublisher = new Publisher(this.settings, "github")
 
     this.addCommand({
       id: "vuepress-publisher-test",
@@ -62,13 +66,26 @@ export default class VuepressPublisher extends Plugin {
         // console.log(result)
         // const publisher = new Publisher(this.settings, "github")
         // publisher.createGithubFile("This is a test file", "test.md")
-        const scanner = new Scanner(this.settings)
-        const markedFiles = scanner.getMarkedFiles()
-        const filesToPublish = scanner.getFileToPublish()
-        this.settings.publishedFiles = filesToPublish
-        this.saveSettings()
-        console.log("markedFiles", markedFiles, "filesToPublish", filesToPublish)
+        // const scanner = new Scanner(this.settings)
+        // const markedFiles = scanner.getMarkedFiles()
+        // const filesToPublish = scanner.getFileToPublish()
+        // this.settings.publishedFiles = filesToPublish
+        // this.saveSettings()
+        // console.log("markedFiles", markedFiles, "filesToPublish", filesToPublish)
+        this.scanVaultAndPublish()
       }
+    })
+  }
+
+  async scanVaultAndPublish(){
+    const filesToPublish = this.scanner.getFileToPublish()
+
+    filesToPublish.map(async (file)=>{
+      const fileContent = await app.vault.cachedRead(app.vault.getAbstractFileByPath(file.filePath) as TFile)
+      console.log(fileContent, file.filePath.split("/").reverse()[0])
+      const formattedContent = await this.formatter.format(fileContent, file.filePath.split("/").reverse()[0])
+      console.log(formattedContent)
+
     })
   }
 
