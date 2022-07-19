@@ -1,24 +1,9 @@
 import { VuepressPublisherSettings } from './../main';
 import { Failure, DataviewApi, getAPI } from 'obsidian-dataview';
 import { posix } from 'path';
+import yaml from 'js-yaml';
 
-class Content {
-    content: string;
-    sourcePath: string;
-
-    constructor(content: string, sourcePath = '') {
-        this.content = content;
-        this.sourcePath = sourcePath;
-    }
-
-    replaceExtended(regex: RegExp, replace: (match: RegExpMatchArray) => string): this {
-        replace = replace.bind(this);
-        for (const match of this.content.matchAll(regex)) {
-            this.content = this.content.replace(match[0], replace(match));
-        }
-        return this;
-    }
-}
+const { dirname, basename, join } = posix;
 
 function isMarkdown(filePath: string) {
     return posix.extname(filePath) === '' || posix.extname(filePath) === '.md';
@@ -27,75 +12,83 @@ function isMarkdown(filePath: string) {
 export default class Formatter {
     constructor(public settings: VuepressPublisherSettings) {}
 
-    async format(content: string, filePath: string) {
-        content = this.replaceLink(content, filePath);
+    async format(content: string, sourcePath: string) {
+        content = content.split('\n').join('\n\n');
+        content = this.replaceLink(content, sourcePath);
         content = this.replaceAdmonition(content);
-        content = await this.replaceDataview(content, getAPI());
+        content = await this.replaceDataview(content);
+        content = this.replaceChart(content);
+        return content;
     }
 
     replaceLink(
         content: string,
-        filePath = '',
-        getLink: (filePath: string, sourcePath: string) => string = (filePath: string, sourcePath: string) =>
-            app.metadataCache.getFirstLinkpathDest(filePath, sourcePath).path
+        sourcePath = '',
+        getLink: (linkPath: string, sourcePath: string) => string = (linkPath: string, sourcePath: string) => {
+            const toFile = app.metadataCache.getFirstLinkpathDest(linkPath, sourcePath);
+            if (toFile === null) return linkPath;
+            else return toFile.path;
+        }
     ) {
-        const settings = this.settings;
-        return new Content(content, filePath)
-            .replaceExtended(
-                /(?<!!)\[(?<alias>[^\[\]]*)?\]\((?<filePath>[^\(\)]+)(?<subPath>#[^\|#\(\)]*)?\)/gu,
-                function (match: RegExpMatchArray) {
-                    let { filePath, subPath = '', alias = '' } = match.groups;
-                    if (!isMarkdown(filePath)) {
-                        filePath = posix.join('/', posix.basename(filePath));
-                        return `[${alias}](${filePath + subPath})`;
+        return content
+            .replace(
+                /(?<!!)\[(?<alias>[^\[\]\n]*?)?\]\((?<linkPath>[^\(\)\n]+?)(?<subPath>#[^\|#\(\)\n]*?)?\)/gu,
+                (...match: any[]) => {
+                    const groups = match.pop();
+                    let { linkPath, subPath = '', alias = '' } = groups;
+                    if (!isMarkdown(linkPath)) {
+                        linkPath = join('/', basename(linkPath));
+                        return `[${alias}](${linkPath + subPath})`;
                     } else return match[0];
                 }
             )
-            .replaceExtended(
-                /!\[(?<alias>[^\[\]]*)?\]\((?<filePath>[^\(\)]+)(?<subPath>#[^\|#\(\)]*)?\)/gu,
-                function (match: RegExpMatchArray) {
-                    let { filePath, subPath = '', alias = '' } = match.groups;
-                    if (!isMarkdown(filePath)) {
-                        filePath = posix.join('/', posix.basename(filePath));
-                        return `![${alias}](${filePath + subPath})`;
+            .replace(
+                /!\[(?<alias>[^\[\]\n]*?)?\]\((?<linkPath>[^\(\)\n]+?)(?<subPath>#[^\|#\(\)\n]*?)?\)/gu,
+                (...match: any[]) => {
+                    const groups = match.pop();
+                    let { linkPath, subPath = '', alias = '' } = groups;
+                    if (!isMarkdown(linkPath)) {
+                        linkPath = join('/', basename(linkPath));
+                        return `![${alias}](${linkPath + subPath})`;
                     } else return match[0];
                 }
             )
-            .replaceExtended(
-                /!\[\[(?<filePath>[^\|\[\]#]*)(?<subPath>#[^\|\[\]#]*)?(?:\|(?<alias>[^\|\[\]]*))?\]\]/gu,
-                function (match: RegExpMatchArray) {
-                    let { filePath, subPath = '', alias } = match.groups;
-                    if (isMarkdown(filePath)) {
-                        filePath = posix.join(settings.publishFolder, getLink(filePath, this.sourcePath));
-                        return `\n@include{${filePath}}\n`;
+            .replace(
+                /!\[\[(?<linkPath>[^\|\[\]#\n]*?)(?<subPath>#[^\|\[\]#\n]*?)?(?:\|(?<alias>[^\|\[\]\n]*?))?\]\]/gu,
+                (...match: any[]) => {
+                    const groups = match.pop();
+                    let { linkPath, subPath = '', alias } = groups;
+                    if (isMarkdown(linkPath)) {
+                        linkPath = join('/', dirname(linkPath), basename(linkPath, '.md'));
+                        return `\n@include(${linkPath})\n`;
                     } else {
-                        filePath = posix.join('/', posix.basename(filePath));
-                        alias = alias ?? posix.basename(filePath);
+                        linkPath = join('/', basename(linkPath));
+                        alias = alias ?? basename(linkPath);
                         if (alias.match(/^(?<width>\d+)(?:x(?<height>\d+))?$/u)) {
                             const size = alias.includes('x') ? alias : alias + 'x';
-                            return `![${posix.basename(filePath)}](${filePath} =${
-                                alias.includes('x') ? alias : alias + 'x'
-                            })`;
+                            return `![${basename(linkPath)}](${linkPath} =${size})`;
                         }
-                        return `![${alias}](${filePath + subPath})`;
+                        return `![${alias}](${linkPath + subPath})`;
                     }
                 }
             )
-            .replaceExtended(
-                /(?<!!)\[\[(?<filePath>[^\|#]*)(?<subPath>#[^\|#]*)?(?:\|(?<alias>[^\|]*))?\]\]/gu,
-                function (match: RegExpMatchArray) {
-                    let { filePath, subPath = '', alias } = match.groups;
-                    if (isMarkdown(filePath)) {
-                        alias = alias ?? filePath;
-                        filePath = posix.join(settings.publishFolder, getLink(filePath, this.sourcePath));
-                        return `[${alias}](${filePath + subPath})`;
+            .replace(
+                /(?<!!)\[\[(?<linkPath>[^\|#\n]*?)(?<subPath>#[^\|#\n]*?)?(?:\|(?<alias>[^\|\n]*?))?\]\]/gu,
+                (...match: any[]) => {
+                    const groups = match.pop();
+                    let { linkPath, subPath = '', alias } = groups;
+                    if (isMarkdown(linkPath)) {
+                        alias = alias ?? linkPath;
+                        linkPath = getLink(linkPath, sourcePath);
+                        linkPath = join('/', dirname(linkPath), basename(linkPath, '.md'));
+                        return `[${alias}](${linkPath + subPath})`;
                     } else {
-                        filePath = posix.join('/', posix.basename(filePath));
-                        alias = alias ?? posix.basename(filePath);
-                        return `[${alias}](${filePath + subPath})`;
+                        linkPath = join('/', basename(linkPath));
+                        alias = alias ?? basename(linkPath);
+                        return `[${alias}](${linkPath + subPath})`;
                     }
                 }
-            ).content;
+            );
     }
 
     replaceAdmonition(content: string): string {
@@ -111,62 +104,77 @@ export default class Formatter {
         admonitionToVuepress.set('danger', 'danger');
         admonitionToVuepress.set('error', 'danger');
         admonitionToVuepress.set('note', 'note');
-        return new Content(content).replaceExtended(
-            /(```+)ad-(?<type>[\S]+)\n(?:title: (?<title>.+)\n)?(?<content>[\s\S]*)\n\1/gu,
-            function (match: RegExpMatchArray) {
-                let { separator, type, title = '', content } = match.groups;
+        return content.replace(
+            /(```+)ad-(?<type>.+?)\n(?:title: (?<title>.+?)\n)?(?<code>[\s\S]*?)\n\1/gu,
+            (...match: any[]) => {
+                const groups = match.pop();
+                let { type, title = '', code } = groups;
                 type = admonitionToVuepress.get(type);
                 if (type === undefined) {
                     return match[0];
                 } else {
                     if (title !== '') title = ' ' + title;
-                    return `::: ${type}${title}\n${content}\n:::`;
+                    return `::: ${type}${title}\n${code}\n:::`;
                 }
             }
-        ).content;
+        );
     }
 
-    async replaceDataview(content: string, dv: DataviewApi): Promise<string> {
+    async replaceDataview(content: string, dv: DataviewApi = getAPI()): Promise<string> {
         if (dv === undefined) return content;
-        const contentviewPattern = /(?<separator>`*)dataview\n(?<content>[\s\S]*)\n?\k<separator>/gu;
-        for (const match of content.matchAll(contentviewPattern)) {
-            let { content } = match.groups;
-            const res = await dv.queryMarkdown(content);
+        let ret = '';
+        let match: RegExpMatchArray;
+        let i = 0;
+        const dataviewPattern = /(?<separator>`*)dataview\n(?<code>[\s\S]*?)\n?\k<separator>/gu;
+        while ((match = dataviewPattern.exec(content)) !== null) {
+            ret += content.slice(i, match.index);
+            const { code } = match.groups;
+            const res = await dv.queryMarkdown(code);
             if (res.successful) {
-                content = content.replace(match[0], res.value);
+                ret += res.value;
             } else {
-                content = content.replace(match[0], (res as Failure<string, string>).error);
+                ret += `<div class="dataview dataview-error" style="width: 100%; min-height: 150px; display: flex; align-items: center; justify-content: center;">
+<pre>Dataview: ${(res as Failure<any, any>).error}</pre>
+</div>`;
             }
+            i = dataviewPattern.lastIndex;
         }
-        const contentviewJSPattern = /(?<separator>`*)dataviewjs\n(?<content>[\s\S]*)\n?\k<separator>/gu;
-        for (const match of content.matchAll(contentviewJSPattern)) {
-            let { content } = match.groups;
-            const res = await dv.queryMarkdown(content);
-            if (res.successful) {
-                content = content.replace(match[0], res.value);
-            } else {
-                content = content.replace(match[0], (res as Failure<string, string>).error);
-            }
-        }
-        return content;
+        ret += content.slice(i);
+        console.log(content.slice(0, i));
+        return ret;
     }
 
-    replaceChart(content: string, parseYaml: (yaml: string) => string): string {
-        const chartPattern = /(?<separator>`*)chart\n(?<content>[\s\S]*)\n?\k<separator>/gu;
-        for (const match of content.matchAll(chartPattern)) {
-            let { content } = match.groups;
-            content = content.replace(
-                match[0],
-                `::: chart
+    replaceChart(content: string): string {
+        return content.replace(/(?<separator>`*)chart\n(?<content>[\s\S]*?)\n?\k<separator>/gu, (...match: any[]) => {
+            const groups = match.pop();
+            const { separator, content } = groups;
+            let data: any;
+            try {
+                data = yaml.load(content.replace(/	/g, '    '));
+            } catch (error) {
+                return `<div class="chart-error" style="padding: 1rem;border-radius: 1rem;">
+<b> Couldn't render Chart:</b>
+<pre><code>${error.toString()}</code></pre>
+</div>`;
+            }
+
+            console.log(data);
+            if (!data.id) {
+                if (!data || !data.type || !data.labels || !data.series) {
+                    return `<div class="chart-error" style="padding: 1rem;border-radius: 1rem;">
+<b> Couldn't render Chart:</b>
+<pre><code>Missing type, labels or series</code></pre>
+</div>`;
+                }
+            }
+            return `::: chart
 
 \`\`\`json
-${JSON.stringify(parseYaml(content), null, 4)}
+${JSON.stringify(content, null, 4)}
 \`\`\`
 
 :::
-`
-            );
-        }
-        return content;
+`;
+        });
     }
 }

@@ -1,19 +1,19 @@
-import Publisher from "../processor/publisher";
+import Publisher from '../processor/publisher';
 
 const settings = {
-  publishFolder: "docs",
-  publishKey: "publish",
-  githubRepo: "windily-cloud/obsidian-publish",
-  githubSSHKey: "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",
-  githubVuepressConfigFile: "",
-  giteeVuepressConfigFile: ""
+    publishFolder: 'Vocabulary',
+    publishKey: 'publish',
+    githubRepo: 'jerrywcy/jerrywcy.github.io',
+    githubSSHKey: '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',
+    githubVuepressConfigFile: '',
+    giteeVuepressConfigFile: '',
 };
 
-const publisher = new Publisher(settings, "github")
+const publisher = new Publisher(settings, 'github');
 
-test("Validate github repo", async () => {
-  expect(await publisher.validateGitHubRepo()).toBe(true)
-})
+test('Validate github repo', async () => {
+    expect(await publisher.validateGitHubRepo()).toBe(true);
+});
 
 // test("Github file exist", async ()=>{
 //   expect(await publisher.isGithubFileExist("no-exists.md")).toBe(false)
@@ -25,4 +25,3 @@ test("Validate github repo", async () => {
 //   expect(await publisher.updateGithubFile("This is new content", "test.md")).toBe("Updated test.md")
 //   expect(await publisher.deleteGithubFile( "test.md")).toBe("Deleted test.md")
 // })
-

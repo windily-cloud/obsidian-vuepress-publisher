@@ -28,6 +28,7 @@
             "destructuring": "all",
             "ignoreReadBeforeAssign": false
         }],
-        "no-useless-escape": 0
+        "no-useless-escape": 0,
+        "no-control-regex":"off"
     }
 }

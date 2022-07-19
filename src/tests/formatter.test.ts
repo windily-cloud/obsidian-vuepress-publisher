@@ -37,7 +37,7 @@ describe('Links', () => {
 
     describe('Bidirectional Links and embeds', () => {
         test('Normal bidirectional links', () => {
-            expect(formatter.replaceLink('[[file]]', '1.md', getLink)).toBe('[file](docs/fileFolder/file.md)');
+            expect(formatter.replaceLink('[[file]]', '1.md', getLink)).toBe('[file](/fileFolder/file)');
         });
 
         test('Bidirectional Link to Assets', () => {
@@ -46,7 +46,7 @@ describe('Links', () => {
 
         test('Bidirectional links within contents', () => {
             expect(formatter.replaceLink('#fewfwe\n- [[file]]\nfewf', '1.md', getLink)).toBe(
-                '#fewfwe\n- [file](docs/fileFolder/file.md)\nfewf'
+                '#fewfwe\n- [file](/fileFolder/file)\nfewf'
             );
         });
 
