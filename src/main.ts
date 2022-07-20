@@ -21,7 +21,6 @@ export interface VuepressPublisherSettings {
     giteeHomepageFile?: string
 
     excludeFolder?: string;
-    excludeFile?: string;
 
     publishedFiles?: Array<{
         filePath: string;

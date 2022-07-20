@@ -18,9 +18,9 @@
                 <SettingItem :setting-name="(t('publishKey') as string)" :setting-desc="(t('publishKeyDesc') as string)">
                     <input type="text" placeholder="publish" :value="settings['publishKey']" @change="handleSaveSettings($event, 'publishKey')">
                 </SettingItem>
-                <SettingItem :setting-name="(t('assetsFolder') as string)" :setting-desc="(t('assetsFolderDesc') as string)">
+                <!-- <SettingItem :setting-name="(t('assetsFolder') as string)" :setting-desc="(t('assetsFolderDesc') as string)">
                     <input type="text" placeholder="docs/images" :value="settings['assetsFolder']" @change="handleSaveSettings($event, 'assetsFolder')">
-                </SettingItem>
+                </SettingItem> -->
                 <SettingItem :setting-name="(t('strictLineBreak') as string)" :setting-desc="(t('strictLineBreakDesc') as string)">
                     <div class="checkbox-container" :class="{'is-enabled': settings.strictLineBreak}" @click='handleSaveBooleanSettings("strictLineBreak")'>
                         <input type="checkbox" v-model="settings.strictLineBreak"/>
