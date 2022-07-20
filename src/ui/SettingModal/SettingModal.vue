@@ -10,53 +10,58 @@
             </div>
         </div>
         <div class="vuepress-setting-main">
+            <!-- General settings -->
             <div class="vuepress-setting-general" v-if="activeClass === 0">
                 <SettingItem :setting-name="(t('publishFolder') as string)" setting-desc="">
-                    <input type="text" :value="plugin.settings['publishFolder']" @change="handleSaveSettings($event, 'publishFolder')">
+                    <input type="text" :value="settings['publishFolder']" @change="handleSaveSettings($event, 'publishFolder')">
                 </SettingItem>
                 <SettingItem :setting-name="(t('publishKey') as string)" setting-desc="">
-                    <input type="text" placeholder="publish" :value="plugin.settings['publishKey']" @change="handleSaveSettings($event, 'publishKey')">
+                    <input type="text" placeholder="publish" :value="settings['publishKey']" @change="handleSaveSettings($event, 'publishKey')">
                 </SettingItem>
                 <SettingItem :setting-name="(t('assetsFolder') as string)" setting-desc="">
-                    <input type="text" placeholder="docs/images" :value="plugin.settings['assetsFolder']" @change="handleSaveSettings($event, 'assetsFolder')">
+                    <input type="text" placeholder="docs/images" :value="settings['assetsFolder']" @change="handleSaveSettings($event, 'assetsFolder')">
+                </SettingItem>
+                <SettingItem :setting-name="(t('strictLineBreak') as string)" setting-desc="">
+                    <div class="checkbox-container" :class="{'is-enabled': settings.strictLineBreak}" @click='handleSaveBooleanSettings("strictLineBreak")'>
+                        <input type="checkbox" v-model="settings.strictLineBreak"/>
+                    </div>
                 </SettingItem>
                 <SettingItem :setting-name="(t('excludeFolder') as string)" setting-desc="">
-                    <textarea  placeholder="folder1,folder2" :value="plugin.settings['excludeFolder']" @change="handleSaveSettings($event, 'excludeFolder')"/>
-                </SettingItem>
-                <SettingItem :setting-name="(t('excludeFile') as string)" setting-desc="">
-                    <textarea type="text" placeholder="file1,file2" :value="plugin.settings['excludeFile']" @change="handleSaveSettings($event, 'excludeFile')"/>
+                    <textarea  placeholder="folder1,folder2" :value="settings['excludeFolder']" @change="handleSaveSettings($event, 'excludeFolder')"/>
                 </SettingItem>
             </div>
 
+            <!-- Github settings -->
             <div class="vuepress-setting-blog" v-if="activeClass === 1">
                 <h3>{{t("basicSetting")}}</h3>
                 <SettingItem :setting-name="(t('githubRepo') as string)" setting-desc="">
-                    <input type="text" :value="plugin.settings['githubRepo']" @change="handleSaveSettings($event, 'githubRepo')">
+                    <input type="text" :value="settings['githubRepo']" @change="handleSaveSettings($event, 'githubRepo')">
                 </SettingItem>
                 <SettingItem :setting-name="(t('githubSSHKey') as string)" setting-desc="">
-                    <input type="text" :value="plugin.settings['githubSSHKey']" @change="handleSaveSettings($event, 'githubSSHKey')">
+                    <input type="text" :value="settings['githubSSHKey']" @change="handleSaveSettings($event, 'githubSSHKey')">
                 </SettingItem>
                 <h3>{{t("blogSetting")}}</h3>
                 <SettingItem :setting-name="(t('vuepressConfigFile') as string)" setting-desc="">
-                    <button :aria-label="(t('newConfigTip') as string)" v-if="!plugin.settings['githubVuepressConfigFile']" @click="handleCreateDefaultVuepressConfigFile('github')">+</button>
-                    <input type="text" :value="plugin.settings['githubVuepressConfigFile']" @change="handleSaveSettings($event, 'githubVuepressConfigFile')">
-                    <button v-if="plugin.settings['githubVuepressConfigFile']" @click="handleOpenSettingFile(plugin.settings['githubVuepressConfigFile'] as string)">open</button>
+                    <button :aria-label="(t('newConfigTip') as string)" v-if="!settings['githubVuepressConfigFile']" @click="handleCreateDefaultVuepressConfigFile('github')">+</button>
+                    <input type="text" v-model="settings['githubVuepressConfigFile']" @change="handleSaveSettings($event, 'githubVuepressConfigFile')">
+                    <button v-if="settings['githubVuepressConfigFile']" @click="handleOpenSettingFile(settings['githubVuepressConfigFile'] as string)">open</button>
                 </SettingItem>
             </div>
 
+            <!-- Gitee settings -->
             <div class="vuepress-setting-theme" v-if="activeClass === 2">
                 <h3>{{t("basicSetting")}}</h3>
                 <SettingItem :setting-name="(t('giteeRepo') as string)" setting-desc="">
-                    <input type="text" :value="plugin.settings['giteeRepo']" @change="handleSaveSettings($event, 'giteeRepo')">
+                    <input type="text" :value="settings['giteeRepo']" @change="handleSaveSettings($event, 'giteeRepo')">
                 </SettingItem>
                 <SettingItem :setting-name="(t('giteeSSHKey') as string)" setting-desc="">
-                    <input type="text" :value="plugin.settings['giteeSSHKey']" @change="handleSaveSettings($event, 'giteeSSHKey')">
+                    <input type="text" :value="settings['giteeSSHKey']" @change="handleSaveSettings($event, 'giteeSSHKey')">
                 </SettingItem>
                 <h3>{{t("blogSetting")}}</h3>
                 <SettingItem :setting-name="(t('vuepressConfigFile') as string)" setting-desc="">
-                    <button :aria-label="(t('newConfigTip') as string)" v-if="!plugin.settings['giteeVuepressConfigFile']" @click="handleCreateDefaultVuepressConfigFile('gitee')">+</button>
-                    <input type="text" :value="plugin.settings['giteeVuepressConfigFile']" @change="handleSaveSettings($event, 'giteeVuepressConfigFile')">
-                    <button v-if="plugin.settings['giteeVuepressConfigFile']" @click="handleOpenSettingFile(plugin.settings['giteeVuepressConfigFile'] as string)">open</button>
+                    <button :aria-label="(t('newConfigTip') as string)" v-if="!settings.giteeVuepressConfigFile" @click="handleCreateDefaultVuepressConfigFile('gitee')">+</button>
+                    <input type="text" v-model="settings.giteeVuepressConfigFile" @change="handleSaveSettings($event, 'giteeVuepressConfigFile')">
+                    <button v-if="settings.giteeVuepressConfigFile" @click="handleOpenSettingFile(settings['giteeVuepressConfigFile'] as string)">open</button>
                 </SettingItem>
             </div>
         </div>
@@ -64,7 +69,7 @@
 </template>
   
 <script setup lang='ts'>
-import {ref, getCurrentInstance} from 'vue'
+import {ref, getCurrentInstance, reactive} from 'vue'
 import t from '../../i18n'
 import {DefaultVuepressConfigContent} from '../../config/DefaultVuepressConfig'
 import SettingItem from './SettingItem.vue'
@@ -79,6 +84,7 @@ if(!plugin){
 //variable
 const settingItems:Array<string> = ["generalSetting", "githubSetting", "giteeSetting"]
 const activeClass  = ref(0)
+const settings = reactive(plugin.settings)
 
 
 //method
@@ -88,6 +94,13 @@ function handleActive(index:number){
 
 async function handleSaveSettings(event: Event, setting:string){
     plugin.settings[setting] = (event.target as HTMLInputElement).value
+    settings[setting] = (event.target as HTMLInputElement).value
+    await plugin.saveSettings()
+}
+
+async function handleSaveBooleanSettings(setting:string){
+    settings[setting] = !settings[setting]
+    plugin.settings[setting] = settings[setting]
     await plugin.saveSettings()
 }
 

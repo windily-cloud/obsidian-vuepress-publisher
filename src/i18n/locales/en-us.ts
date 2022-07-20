@@ -4,7 +4,7 @@ export default {
 	publishFolder: "Publish Folder",
 	publishKey: "Publish Key",
 	excludeFolder: "Exclude Folder",
-	excludeFile: "Exclude File",
+	strictLineBreak: "Strict Line Break",
 	vuepressConfigFile: "Vuepress Config File",
 	newConfigTip: "Generate default vuepress Config file",
 	assetsFolder: "Assets Folder",
