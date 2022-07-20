@@ -13,10 +13,12 @@ export interface VuepressPublisherSettings {
     githubRepo?: string;
     githubSSHKey?: string;
     githubVuepressConfigFile?: string;
+    githubHomepageFile?: string
 
     giteeRepo?: string;
     giteeSSHKey?: string;
     giteeVuepressConfigFile?: string;
+    giteeHomepageFile?: string
 
     excludeFolder?: string;
     excludeFile?: string;
@@ -35,7 +37,7 @@ export interface VuepressPublisherSettings {
 const DEFAULT_SETTINGS: Partial<VuepressPublisherSettings> = {
     publishFolder: '',
     publishKey: 'publish',
-    strictLineBreak: true,
+    strictLineBreak: false,
     githubRepo: '',
     githubSSHKey: '',
     githubVuepressConfigFile: '',
