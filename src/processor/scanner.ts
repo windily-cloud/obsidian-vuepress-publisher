@@ -1,4 +1,4 @@
-import { MarkdownEditView, TFile } from 'obsidian';
+import { TFile } from 'obsidian';
 import { VuepressPublisherSettings } from './../main';
 
 export default class Scanner {

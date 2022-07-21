@@ -12,8 +12,8 @@ export default {
 	vuepressConfigFile: "Vuepress Config File",
 	vuepressConfigFileDesc: "This file will send to cloud",
 	newConfigTip: "Generate default vuepress Config file",
-	assetsFolder: "Assets Folder",
-	assetsFolderDesc: "Must start from root folder",
+	// assetsFolder: "Assets Folder",
+	// assetsFolderDesc: "Must start from root folder",
 
 	githubRepo: "Github Repo",
 	githubRepoDesc: "github repository. eg: cloud/vuepress-publish",

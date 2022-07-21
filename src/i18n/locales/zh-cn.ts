@@ -12,8 +12,8 @@ export default {
   vuepressConfigFile: "Vuepress设置文件",
   vuepressConfigFileDesc: "这个文件会发送到云端以配置vuepress",
   newConfigTip: "生成默认的vuepress配置文件",
-  assetsFolder: "资源文件夹",
-  assetsFolderDesc: "必须从根目录开始",
+  // assetsFolder: "资源文件夹",
+  // assetsFolderDesc: "必须从根目录开始",
 
   githubRepo: "Github仓库",
   githubRepoDesc: "eg: cloud/vuepress-publish",

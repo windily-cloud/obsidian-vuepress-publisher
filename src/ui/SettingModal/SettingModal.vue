@@ -85,6 +85,7 @@ import {DefaultVuepressConfigContent} from '../../config/DefaultVuepressConfig'
 import SettingItem from './SettingItem.vue'
 import type VuepressPublisher from '../../main';
 import { Notice } from 'obsidian';
+import { DefaultHomepageContent } from '../../config/DefaultHomepage';
 //init
 const plugin = getCurrentInstance()?.appContext.config.globalProperties.plugin as VuepressPublisher
 if(!plugin){
@@ -138,7 +139,7 @@ async function handleCreateDefaultVuepressConfigFile(blog: "github" | "gitee"){
 async function handleCreateDefaultHomepageFile(blog: "github" | "gitee"){
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     //@ts-ignore
-    await app.fileManager.createNewMarkdownFile('', `vuepress-${blog}-homepage`, DefaultVuepressConfigContent)
+    await app.fileManager.createNewMarkdownFile('', `vuepress-${blog}-homepage`, DefaultHomepageContent)
     plugin.settings[`${blog}HomepageFile`] = `vuepress-${blog}-homepage`
     await plugin.saveSettings()
     handleOpenSettingFile(plugin.settings[`${blog}HomepageFile`] as string)
