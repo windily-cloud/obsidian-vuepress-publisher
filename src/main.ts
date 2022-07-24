@@ -1,7 +1,7 @@
 import { Plugin, TFile } from 'obsidian';
 import { VuepressPublisherSettingTab } from './settings';
 import t from './i18n';
-import Formatter from './processor/formatter';
+import Formatter from './processor/format/formatter';
 import Publisher from './processor/publisher';
 import Scanner from './processor/scanner';
 
@@ -84,7 +84,7 @@ export default class VuepressPublisher extends Plugin {
         filesToPublish.map(async (file) => {
             const fileContent = await app.vault.cachedRead(app.vault.getAbstractFileByPath(file.filePath) as TFile);
             console.log(fileContent, file.filePath);
-            const formattedContent = await this.formatter.format(fileContent, file.filePath);
+            const formattedContent = await this.formatter.formatFile(fileContent, file.filePath);
             console.log(formattedContent);
         });
     }
