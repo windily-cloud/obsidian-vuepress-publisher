@@ -7,7 +7,7 @@ export default function codeBlock(state: State): boolean {
     const exec = codeBlockPattern.exec(content);
     if (exec === null || exec.groups === undefined) return false;
     state.left += exec[0].length;
-    console.log('CodeBlock', state.content);
-    console.log(exec[0]);
+    // console.log('code block');
+    // console.log('match:', exec[0]);
     return true;
 }

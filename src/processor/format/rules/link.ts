@@ -18,14 +18,19 @@ export default function link(
     if (exec === null || exec.groups === undefined) return false;
     let { alias = '', linkPath, subPath = '' } = exec.groups;
     let replace = '';
-    if (isMarkdown(linkPath)) {
-        linkPath = join('/docs', getPath(linkPath, state.env.sourcePath));
-    } else {
-        linkPath = join('/', basename(linkPath));
+    if (!linkPath.startsWith('http')) {
+        if (isMarkdown(linkPath)) {
+            linkPath = join('/docs', getPath(linkPath, state.env.sourcePath));
+        } else {
+            linkPath = join('/', basename(linkPath));
+        }
     }
     replace = `[${alias}](${linkPath}${subPath})`;
     state.content = content.slice(0, state.left) + replace + content.slice(state.left + exec[0].length);
     state.left = state.left + replace.length;
-    console.log('link', state.content, replace);
+    state.right = state.right - exec[0].length + replace.length;
+    // console.log('link');
+    // console.log('match:', exec[0]);
+    // console.log('replace:', replace);
     return true;
 }

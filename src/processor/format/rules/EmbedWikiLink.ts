@@ -27,6 +27,9 @@ export default function embedWikiLink(state: State): boolean {
     }
     state.content = content.slice(0, state.left) + replace + content.slice(state.left + exec[0].length);
     state.left += replace.length;
-    console.log('EmbedWikiLink', state.content, replace);
+    state.right = state.right - exec[0].length + replace.length;
+    // console.log('embed wiki link');
+    // console.log('match:', exec[0]);
+    // console.log('replace:', replace);
     return true;
 }

@@ -5,6 +5,9 @@ export default function chart(state: State): boolean {
     const content = state.content;
     const chartPattern = /(?<separator>```+)chart\n(?<code>[\s\S]*?)\n?\k<separator>/uy;
     chartPattern.lastIndex = state.left;
+    if (content.slice(state.left, state.left + 1) === '`') {
+        console.log('chart possible match', content.slice(state.left));
+    }
     const exec = chartPattern.exec(content);
     if (exec === null || exec.groups === undefined) return false;
     const { code } = exec.groups;
@@ -45,6 +48,9 @@ ${JSON.stringify(content, null, 4)}
 
     state.content = content.slice(0, state.left) + replace + content.slice(state.left + exec[0].length);
     state.left += replace.length;
-    console.log('chart', state.content, replace);
+    state.right = state.right - exec[0].length + replace.length;
+    // console.log('chart');
+    // console.log('match:', exec[0]);
+    // console.log('replace:', replace);
     return true;
 }

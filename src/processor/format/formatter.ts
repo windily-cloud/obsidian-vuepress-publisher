@@ -17,6 +17,7 @@ export default class Formatter {
 
     async format(state: State) {
         while (state.left < state.right) {
+            console.log(state.content.slice(state.left, state.right));
             const rules = this.ruler.getRules();
             for (const rule of rules) {
                 const prevLeft = state.left;

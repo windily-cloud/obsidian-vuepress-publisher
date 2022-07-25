@@ -83,9 +83,8 @@ export default class VuepressPublisher extends Plugin {
 
         filesToPublish.map(async (file) => {
             const fileContent = await app.vault.cachedRead(app.vault.getAbstractFileByPath(file.filePath) as TFile);
-            console.log(fileContent, file.filePath);
             const formattedContent = await this.formatter.formatFile(fileContent, file.filePath);
-            console.log(formattedContent);
+            await this.githubPublisher.updateGithubFile;
         });
     }
 

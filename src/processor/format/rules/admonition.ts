@@ -25,6 +25,9 @@ export default function admonition(state: State): boolean {
     const replace = `::: ${type} ${title}\n${code}\n:::`;
     state.content = content.slice(0, state.left) + replace + content.slice(state.left + exec[0].length);
     state.left += replace.length;
-    console.log('admonition', state.content, replace);
+    state.right = state.right - exec[0].length + replace.length;
+    // console.log('admonition');
+    // console.log('match:', exec[0]);
+    // console.log('replace:', replace);
     return true;
 }

@@ -16,7 +16,7 @@ export default function embedlink(state: State): boolean {
         linkPath = join('/docs', linkPath);
         replace = `\n@include(${linkPath})\n`;
     } else {
-        linkPath = join('/', basename(linkPath));
+        if (!linkPath.startsWith('http')) linkPath = join('/', basename(linkPath));
         if (width !== undefined) {
             replace = `![${alias}](${linkPath} =${width}x${height ?? ''})`;
         } else {
@@ -25,6 +25,9 @@ export default function embedlink(state: State): boolean {
     }
     state.content = content.slice(0, state.left) + replace + content.slice(state.left + exec[0].length);
     state.left += replace.length;
-    console.log('EmbedLink', state.content, replace);
+    state.right = state.right - exec[0].length + replace.length;
+    // console.log('embed link');
+    // console.log('match:', exec[0]);
+    // console.log('replace:', replace);
     return true;
 }
