@@ -8,17 +8,19 @@ import Scanner from './processor/scanner';
 export interface VuepressPublisherSettings {
     publishFolder?: string;
     publishKey?: string;
+    strictLineBreak?: boolean
 
     githubRepo?: string;
     githubSSHKey?: string;
     githubVuepressConfigFile?: string;
+    githubHomepageFile?: string
 
     giteeRepo?: string;
     giteeSSHKey?: string;
     giteeVuepressConfigFile?: string;
+    giteeHomepageFile?: string
 
     excludeFolder?: string;
-    excludeFile?: string;
 
     publishedFiles?: Array<{
         filePath: string;
@@ -34,6 +36,7 @@ export interface VuepressPublisherSettings {
 const DEFAULT_SETTINGS: Partial<VuepressPublisherSettings> = {
     publishFolder: '',
     publishKey: 'publish',
+    strictLineBreak: false,
     githubRepo: '',
     githubSSHKey: '',
     githubVuepressConfigFile: '',
